@@ -2,7 +2,9 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useRouter } from 'vue-router';
+import AnimatedBackground from '@/components/AnimatedBackground.vue'; // Importamos el fondo
 
+const form = ref<any>(null);
 const email = ref('');
 const password = ref('');
 const rememberMe = ref(false); // Nuevo estado para "Remember me"
@@ -12,21 +14,25 @@ const authStore = useAuthStore();
 const router = useRouter();
 
 const rules = {
-  required: (value: string) => !!value || 'Requerido.',
-  email: (value: string) => {
+  required: (value: any) => !!value || 'Este campo es requerido.',
+  email: (value: any) => {
     const pattern = /.+@.+\..+/;
     return pattern.test(value) || 'E-mail inválido.';
   },
-  min: (v: string) => v.length >= 6 || 'Mínimo 6 caracteres',
+  min: (v: any) => (!v || v.length >= 6) || 'Mínimo 6 caracteres',
 };
 
 const handleLogin = async () => {
+  if (!form.value) return;
+  const { valid } = await form.value.validate();
+  if (!valid) return;
+
   loading.value = true;
   try {
     await authStore.login(email.value, password.value);
     // Aquí podrías manejar la lógica de "Remember me" si es necesario
   } catch (error) {
-    // Manejo de errores (puedes usar un v-snackbar)
+    alert('Error al iniciar sesión');
     console.error(error);
   } finally {
     loading.value = false;
@@ -35,8 +41,8 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <v-main class="login-background fill-height">
-    <v-app-bar flat color="transparent" class="px-4 mt-2">
+  <AnimatedBackground>
+    <v-app-bar flat color="transparent" class="px-4 mt-2" style="position: absolute; z-index: 10; width: 100%;">
       <v-toolbar-title class="font-weight-bold text-h5 text-white">Logo</v-toolbar-title>
       <v-spacer></v-spacer>
       <div class="d-none d-md-flex">
@@ -45,10 +51,9 @@ const handleLogin = async () => {
         <v-btn variant="text" class="text-white text-capitalize">Services</v-btn>
         <v-btn variant="text" class="text-white text-capitalize">Contact</v-btn>
       </div>
-      <v-btn variant="outlined" color="white" class="ml-4 text-capitalize rounded-lg" to="/">Login</v-btn>
     </v-app-bar>
 
-    <v-container class="fill-height d-flex align-center justify-center">
+    <v-container class="fill-height d-flex align-center justify-center" style="position: relative; z-index: 10;">
       <v-row justify="center">
         <v-col cols="12" sm="8" md="5" lg="4">
           <v-card class="glass-card pa-6 rounded-xl" elevation="10">
@@ -58,7 +63,7 @@ const handleLogin = async () => {
             </div>
             
             <v-card-text class="pa-0">
-              <v-form @submit.prevent="handleLogin">
+              <v-form ref="form" @submit.prevent="handleLogin">
                 <v-text-field
                   v-model="email"
                   label="Email"
@@ -114,9 +119,11 @@ const handleLogin = async () => {
                 >
                   Login
                 </v-btn>
-
                 <div class="text-center text-white text-caption">
-                  Don't have an account? <a href="#" class="text-white font-weight-bold text-decoration-none">Register</a>
+                  Don't have an account? 
+                  <RouterLink to="/register" class="text-white font-weight-bold text-decoration-none">
+                    Register
+                  </RouterLink>
                 </div>
               </v-form>
             </v-card-text>
@@ -124,27 +131,17 @@ const handleLogin = async () => {
         </v-col>
       </v-row>
     </v-container>
-  </v-main>
+  </AnimatedBackground>
 </template>
 
 <style scoped>
-/* Aplica tu imagen de fondo aquí */
-.login-background {
-  /* Cambia 'login-bg.jpg' por el nombre de tu imagen */
-  background-image: url('@/assets/fondo.gif'); 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
 /* Efecto Glassmorphism para la tarjeta */
 .glass-card {
-  /* Color de fondo translúcido (ajusta el último valor para la opacidad) */
-  background-color: rgba(25, 35, 75, 0.5) !important; 
+  background-color: rgba(20, 20, 40, 0.6) !important; /* Más oscuro para contraste */
   /* Efecto de desenfoque del fondo detrás de la tarjeta */
-  backdrop-filter: blur(10px); 
+  backdrop-filter: blur(15px); 
   /* Borde sutil y translúcido */
-  border: 1px solid rgba(255, 255, 255, 0.125);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
 }
 

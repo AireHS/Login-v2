@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '../views/LoginView.vue';
+import RegisterView from '../views/RegisterView.vue';
+import DashboardView from '../views/DashboardView.vue';
 // Asumo que tienes un HomeView, si no, crea uno básico
 // import HomeView from '../views/HomeView.vue'; 
 
@@ -15,8 +17,19 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/LoginView.vue'), // Lazy loading recomendado
+      component: LoginView, // Lazy loading recomendado
     },
+    {
+      path: '/register',
+      name: 'register',
+      component: RegisterView
+    },
+    {
+    path: '/dashboard',
+      name: 'dashboard',
+      component: DashboardView,
+      meta: { requiresAuth: true }
+    }
   ],
 });
 

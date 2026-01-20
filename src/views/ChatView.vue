@@ -38,6 +38,14 @@ watch(
       </div>
       
       <v-list density="compact" nav>
+        <v-list-item 
+        title="Dashboard KPIs" 
+        value="dashboard" 
+        to="/dashboard" 
+        prepend-icon="mdi-view-dashboard-outline" 
+        color="primary"
+        rounded="lg"
+        ></v-list-item>
         <v-list-subheader class="text-uppercase font-weight-bold text-caption">Hoy</v-list-subheader>
         <v-list-item title="Análisis de ciberseguridad" value="chat1" prepend-icon="mdi-message-text-outline" rounded="lg"></v-list-item>
         <v-list-item title="Idea de Login Vue" value="chat2" prepend-icon="mdi-message-text-outline" rounded="lg"></v-list-item>

@@ -1,36 +1,48 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import router from '@/router';
+import { useRouter } from 'vue-router';
 
 export const useAuthStore = defineStore('auth', () => {
-  // Estado
-  const user = ref<{ email: string } | null>(null);
+  const router = useRouter();
+  const user = ref<{ email: string; name?: string } | null>(null);
   const isAuthenticated = ref(false);
 
-  // Acciones
   async function login(email: string, password: string) {
-    // AQUÍ iría tu llamada real a la API (axios/fetch)
-    // Simulamos una validación exitosa:
+    // Aquí deberías implementar la lógica real de autenticación contra tu API
     if (email && password) {
       user.value = { email };
       isAuthenticated.value = true;
-      
-      // Guardar token en localStorage (opcional pero recomendado)
-      localStorage.setItem('token', 'token-falso-123');
-      
-      // Redirigir al home
-      await router.push('/');
+      localStorage.setItem('token', 'token-simulado'); // Guarda el token real aquí
+      router.push('/'); // Redirige al home o dashboard
     } else {
       throw new Error('Credenciales inválidas');
     }
   }
 
-  async function logout() {
+  // NUEVA FUNCIÓN: Registro
+  async function register(name: string, email: string, password: string) {
+    // Aquí iría tu llamada a la API (ej. axios.post('/api/register', ...))
+    
+    // Simulamos éxito
+    if (email && password && name) {
+      // Auto-login después del registro
+      user.value = { email, name };
+      isAuthenticated.value = true;
+      localStorage.setItem('token', 'token-nuevo-usuario');
+      
+      // Redirigir al chat
+      router.push('/'); 
+    } else {
+      throw new Error('Faltan datos para el registro');
+    }
+  }
+
+  function logout() {
     user.value = null;
     isAuthenticated.value = false;
     localStorage.removeItem('token');
-    await router.push('/login');
+    router.push('/login');
   }
 
-  return { user, isAuthenticated, login, logout };
+  return { user, isAuthenticated, login, register, logout };
 });

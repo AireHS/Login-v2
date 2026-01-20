@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
+import VueApexCharts from 'vue3-apexcharts';
 // 1. Importar estilos de Vuetify y de los Iconos (OBLIGATORIO)
 import 'vuetify/styles'
 import '@mdi/font/css/materialdesignicons.css' 
@@ -26,5 +27,6 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(vuetify) // 4. ¡Conectar Vuetify a la App!
+app.use(VueApexCharts);
 
 app.mount('#app')
